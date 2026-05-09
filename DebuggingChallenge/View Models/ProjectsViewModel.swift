@@ -9,12 +9,13 @@ class ProjectsViewModel: ObservableObject {
         self.projectService = projectService
     }
 
+    @MainActor
     func loadProjects() {
+        defer { isLoading = false }
+        isLoading = true
         Task {
-            isLoading = true
             let fetchedProjects = await projectService.fetchProjects()
             projects = fetchedProjects
-            isLoading = false
         }
     }
 }

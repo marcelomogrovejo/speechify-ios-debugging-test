@@ -4,10 +4,10 @@ struct ProjectsScreen: View {
     @EnvironmentObject var coordinator: MainCoordinator
     @State private var searchText = ""
     @State private var loaderProgress: Float = 0.0
-    @ObservedObject private var viewModel: ProjectsViewModel
+    @StateObject private var viewModel: ProjectsViewModel
 
     init(viewModel: ProjectsViewModel) {
-        _viewModel = ObservedObject(wrappedValue: viewModel)
+        _viewModel = StateObject(wrappedValue: viewModel)
     }
 
     var body: some View {
