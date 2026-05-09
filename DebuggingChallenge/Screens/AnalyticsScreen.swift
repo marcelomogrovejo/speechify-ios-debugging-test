@@ -3,10 +3,10 @@ import SwiftUI
 struct AnalyticsScreen: View {
     @EnvironmentObject var coordinator: MainCoordinator
     @State private var loaderProgress: Float = 0.0
-    @ObservedObject private var viewModel: AnalyticsViewModel
+    @StateObject private var viewModel: AnalyticsViewModel
 
     init(viewModel: AnalyticsViewModel) {
-        _viewModel = ObservedObject(wrappedValue: viewModel)
+        _viewModel = StateObject(wrappedValue: viewModel)
     }
 
     var body: some View {

@@ -9,12 +9,13 @@ class AnalyticsDetailsViewModel: ObservableObject {
         self.projectService = projectService
     }
 
+    @MainActor
     func loadRecentProjects() {
+        defer { isLoading = false }
+        isLoading = true
         Task {
-            isLoading = true
             let projects = await projectService.fetchProjects()
             recentProjects = projects
-            isLoading = false
         }
     }
 }

@@ -12,14 +12,15 @@ class AnalyticsViewModel: ObservableObject {
         self.projectService = projectService
     }
 
+    @MainActor
     func loadAnalytics() {
+        defer { isLoading = false }
+        isLoading = true
         Task {
-            isLoading = true
             let details = await analyticsService.fetchAnalyticsDetails()
             let projects = await projectService.fetchProjects()
             analyticsDetails = details
             recentProjects = projects
-            isLoading = false
         }
     }
 }
