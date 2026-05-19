@@ -9,9 +9,11 @@ class AnalyticsDetailsViewModel: ObservableObject {
         self.projectService = projectService
     }
 
+    // FIX: @MainActor ensures @Published properties update on the main thread (same as the other VMs).
+    @MainActor
     func loadRecentProjects() {
+        isLoading = true
         Task {
-            isLoading = true
             let projects = await projectService.fetchProjects()
             recentProjects = projects
             isLoading = false

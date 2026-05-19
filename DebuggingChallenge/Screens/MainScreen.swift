@@ -36,7 +36,13 @@ import SwiftUI
  */
 
 struct MainScreen: View {
-    @ObservedObject private var coordinator = MainCoordinator()
+    // FIX: @ObservedObject -> @StateObject
+    // This view CREATES the coordinator, so it OWNS it.
+    // @ObservedObject doesn't preserve the object across re-renders,
+    // so if the parent re-evaluates its body, a new coordinator would be created
+    // and all navigation state (path) would be lost.
+    // Rule: if the view creates it, use @StateObject. If it receives it, use @ObservedObject.
+    @StateObject private var coordinator = MainCoordinator()
 
     var body: some View {
         TabView {
