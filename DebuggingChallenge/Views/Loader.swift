@@ -94,6 +94,7 @@ struct Loader: UIViewRepresentable {
         view.progressSubject
             .sink { context.coordinator.updateProgress($0) }
             .store(in: &context.coordinator.subscriptons)
+
         view.animated = animated
         return view
     }

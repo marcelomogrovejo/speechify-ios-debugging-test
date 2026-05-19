@@ -3,6 +3,7 @@ import SwiftUI
 @main
 struct DebuggingChallengeApp: App {
     @State private var currentScreen: CurrentScreen = .main
+
     var body: some Scene {
         WindowGroup {
             switch currentScreen {
