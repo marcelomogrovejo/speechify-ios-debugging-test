@@ -41,42 +41,55 @@ final class DefaultReminderService: ReminderService {
 
     func fetchReminders(completion: @escaping ([Reminder]) -> Void) {
         var reminders: [Reminder] = []
+        var completedCount = 0
 
         for _ in 0 ..< 3 {
             dataSource.fetchReminders {
                 reminders.append(contentsOf: $0)
+                completedCount += 1
+                if completedCount == 3 { completion(reminders) }
             }
         }
-
-        completion(reminders)
     }
 
     func remindersPublisher() -> AnyPublisher<[Reminder], Never> {
         var reminders: [Reminder] = []
+        var completedCount = 0
 
         return Future { promise in
             (0..<3).forEach { _ in
                 self.dataSource.fetchReminders { newReminders in
                     reminders.append(contentsOf: newReminders)
+                    completedCount += 1
+                    if completedCount == 3 { promise(.success(reminders)) }
                 }
             }
-            promise(.success(reminders))
         }
+        .handleEvents(receiveOutput: { value in
+            print("Publisher emitted: \(value)")
+            print("Count: \(value.count)")
+        })
+        .print("DEBUG reminders")
         .eraseToAnyPublisher()
     }
 
     func fetchRemindersAsync() async -> [Reminder] {
-        var reminders: [Reminder] = []
-
-        for _ in 0..<3 {
-            Task {
-                let fetched = await self.dataSource.fetchReminders()
-                reminders.append(contentsOf: fetched)
+        let reminders = await withTaskGroup(of: [Reminder].self) { group in
+            for _ in 0..<3 {
+                group.addTask {
+                    return await self.dataSource.fetchReminders()
+                }
             }
-        }
 
+            var collected: [Reminder] = []
+            for await result in group {
+                collected.append(contentsOf: result)
+            }
+            return collected
+        }
         return reminders
     }
+
 }
 /*
  *****************************************************************************
