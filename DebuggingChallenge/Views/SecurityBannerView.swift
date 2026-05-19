@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct SecurityBannerView: View {
-    @EnvironmentObject var auth: AuthenticationManager
+    @Binding var username: String
     @State private var lastUsername: String = ""
     let sessionService: SessionService
 
@@ -16,7 +16,7 @@ struct SecurityBannerView: View {
                 .foregroundColor(.primary)
                 .multilineTextAlignment(.center)
 
-            Text(auth.username.isEmpty ? "Please enter your username" : "Username: \(auth.username)")
+            Text(username.isEmpty ? "Please enter your username" : "Username: \(username)")
                 .font(.title3)
                 .foregroundColor(.secondary)
                 .padding(.top, 4)
@@ -44,9 +44,9 @@ struct SecurityBannerView: View {
                 )
         )
         .onAppear {
-            lastUsername = auth.username
+            lastUsername = username
         }
-        .onChange(of: auth.username) { newUsername in
+        .onChange(of: username) { newUsername in
             lastUsername = newUsername
         }
         /*
