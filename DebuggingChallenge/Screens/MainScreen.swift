@@ -36,7 +36,7 @@ import SwiftUI
  */
 
 struct MainScreen: View {
-    @ObservedObject private var coordinator = MainCoordinator()
+    @StateObject private var coordinator = MainCoordinator()
 
     var body: some View {
         TabView {

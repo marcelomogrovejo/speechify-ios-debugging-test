@@ -3,8 +3,13 @@ import SwiftUI
 
 struct AnalyticsDetailsScreen: View {
     let details: AnalyticsDetails
-    @ObservedObject var viewModel: AnalyticsDetailsViewModel
+    @StateObject var viewModel: AnalyticsDetailsViewModel
     @State private var loaderProgress: Float = 0.0
+
+    init(details: AnalyticsDetails, viewModel: AnalyticsDetailsViewModel) {
+        self.details = details
+        _viewModel = StateObject(wrappedValue: viewModel)
+    }
 
     var body: some View {
         List {

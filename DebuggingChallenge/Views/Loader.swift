@@ -3,7 +3,13 @@ import UIKit
 import SwiftUI
 
 class LoaderView: UIView {
-    var animated: Bool = false
+    var animated: Bool = false {
+        didSet {
+            if animated {
+                startTimer()
+            }
+        }
+    }
 
     private(set) var progressSubject = CurrentValueSubject<Float, Never>(0.0)
 
@@ -17,6 +23,10 @@ class LoaderView: UIView {
         if animated {
             startTimer()
         }
+    }
+
+    deinit {
+        timer?.invalidate()
     }
 
     required init?(coder: NSCoder) {
@@ -50,12 +60,13 @@ class LoaderView: UIView {
     }
 
     private func startTimer() {
-        timer = Timer.scheduledTimer(withTimeInterval: 0.04, repeats: true) { [unowned self] _ in
-            progressSubject.value += 0.1
-            if progressSubject.value > 1.0 {
-                progressSubject.value = 0.0
+        timer = Timer.scheduledTimer(withTimeInterval: 0.04, repeats: true) { [weak self] _ in
+            guard let self else { return }
+            self.progressSubject.value += 0.1
+            if self.progressSubject.value > 1.0 {
+                self.progressSubject.value = 0.0
             }
-            progressLayer.strokeEnd = CGFloat(progressSubject.value)
+            self.progressLayer.strokeEnd = CGFloat(self.progressSubject.value)
         }
     }
 }
@@ -73,6 +84,7 @@ struct Loader: UIViewRepresentable {
         view.progressSubject
             .sink { context.coordinator.updateProgress($0) }
             .store(in: &context.coordinator.subscriptons)
+
         view.animated = animated
         return view
     }
