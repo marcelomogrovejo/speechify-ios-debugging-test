@@ -2,7 +2,7 @@ import SwiftUI
 
 @main
 struct DebuggingChallengeApp: App {
-    @State private var currentScreen: CurrentScreen = .main
+    @State private var currentScreen: CurrentScreen = .login
 
     var body: some Scene {
         WindowGroup {
