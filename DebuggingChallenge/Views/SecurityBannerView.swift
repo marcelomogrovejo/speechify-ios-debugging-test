@@ -1,6 +1,13 @@
 import SwiftUI
 
 struct SecurityBannerView: View {
+    // FIX: Replaced @EnvironmentObject var auth: AuthenticationManager with a @Binding to just username.
+    // BUG WAS: This view observed the whole AuthenticationManager via @EnvironmentObject.
+    // When Login was tapped, auth.passwordAttempts changed, which triggered a re-render of this view.
+    // On re-render, the .execute modifier fired initializeVerificationProcess(), sending a UUID signal
+    // into the verification pipe while verify() was still listening — causing login to always fail.
+    // FIX: By only binding to username, this view no longer re-renders when passwordAttempts changes,
+    // so .execute doesn't fire during login, the pipe stays quiet, verify() times out, and returns .success.
     @Binding var username: String
     @State private var lastUsername: String = ""
     let sessionService: SessionService
