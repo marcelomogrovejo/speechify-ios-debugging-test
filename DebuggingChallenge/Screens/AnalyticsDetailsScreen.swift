@@ -3,6 +3,10 @@ import SwiftUI
 
 struct AnalyticsDetailsScreen: View {
     let details: AnalyticsDetails
+    // FIX: @ObservedObject -> @StateObject
+    // The VM is created inline in AnalyticsScreen's navigationDestination closure,
+    // so this screen is the only owner. Without @StateObject, SwiftUI might replace
+    // the VM on re-evaluation, losing any loaded recent projects.
     @StateObject var viewModel: AnalyticsDetailsViewModel
     @State private var loaderProgress: Float = 0.0
 

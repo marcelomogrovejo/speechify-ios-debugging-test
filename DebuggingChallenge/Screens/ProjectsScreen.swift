@@ -4,6 +4,9 @@ struct ProjectsScreen: View {
     @EnvironmentObject var coordinator: MainCoordinator
     @State private var searchText = ""
     @State private var loaderProgress: Float = 0.0
+    // FIX: @ObservedObject -> @StateObject
+    // This view is the sole owner of its viewModel (created fresh in MainScreen.body).
+    // @ObservedObject could cause the VM to be recreated on parent re-renders, losing loaded data.
     @StateObject private var viewModel: ProjectsViewModel
 
     init(viewModel: ProjectsViewModel) {

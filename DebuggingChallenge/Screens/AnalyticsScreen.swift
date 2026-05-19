@@ -3,6 +3,7 @@ import SwiftUI
 struct AnalyticsScreen: View {
     @EnvironmentObject var coordinator: MainCoordinator
     @State private var loaderProgress: Float = 0.0
+    // FIX: @ObservedObject -> @StateObject (same ownership issue as ProjectsScreen)
     @StateObject private var viewModel: AnalyticsViewModel
 
     init(viewModel: AnalyticsViewModel) {

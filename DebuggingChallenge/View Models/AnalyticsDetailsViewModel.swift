@@ -9,6 +9,7 @@ class AnalyticsDetailsViewModel: ObservableObject {
         self.projectService = projectService
     }
 
+    // FIX: @MainActor ensures @Published properties update on the main thread (same as the other VMs).
     @MainActor
     func loadRecentProjects() {
         defer { isLoading = false }
