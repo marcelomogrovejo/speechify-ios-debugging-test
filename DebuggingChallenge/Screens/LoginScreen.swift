@@ -24,7 +24,10 @@ struct LoginScreen: View {
 
     var body: some View {
         VStack(spacing: 32) {
+            // FIX: Pass only $auth.username instead of the whole AuthenticationManager.
+            // This prevents SecurityBannerView from re-rendering when passwordAttempts changes.
             SecurityBannerView(username: $auth.username, sessionService: sessionService)
+            // FIX: Moved .environmentObject(auth) here so only LoginFormView observes the full auth object.
             LoginFormView(sessionService: sessionService, onSuccess: onSuccess)
                 .environmentObject(auth)
         }
