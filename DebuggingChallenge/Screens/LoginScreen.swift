@@ -24,11 +24,11 @@ struct LoginScreen: View {
 
     var body: some View {
         VStack(spacing: 32) {
-            SecurityBannerView(sessionService: sessionService)
+            SecurityBannerView(username: $auth.username, sessionService: sessionService)
             LoginFormView(sessionService: sessionService, onSuccess: onSuccess)
+                .environmentObject(auth)
         }
         .padding(24)
         .frame(maxWidth: 500)
-        .environmentObject(auth)
     }
 }
