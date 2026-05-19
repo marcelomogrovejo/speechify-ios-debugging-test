@@ -15,13 +15,13 @@ class AnalyticsViewModel: ObservableObject {
     // FIX: @MainActor ensures @Published properties update on the main thread (same as ProjectsViewModel).
     @MainActor
     func loadAnalytics() {
-        defer { isLoading = false }
         isLoading = true
         Task {
             let details = await analyticsService.fetchAnalyticsDetails()
             let projects = await projectService.fetchProjects()
             analyticsDetails = details
             recentProjects = projects
+            isLoading = false
         }
     }
 }

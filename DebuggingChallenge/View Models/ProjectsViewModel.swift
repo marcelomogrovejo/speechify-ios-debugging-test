@@ -14,11 +14,11 @@ class ProjectsViewModel: ObservableObject {
     // causing "Publishing changes from background threads" warnings and potential UI glitches.
     @MainActor
     func loadProjects() {
-        defer { isLoading = false }
         isLoading = true
         Task {
             let fetchedProjects = await projectService.fetchProjects()
             projects = fetchedProjects
+            isLoading = false
         }
     }
 }
