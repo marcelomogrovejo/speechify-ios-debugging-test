@@ -3,7 +3,17 @@ import UIKit
 import SwiftUI
 
 class LoaderView: UIView {
-    var animated: Bool = false
+    // FIX: Added didSet so the timer actually starts.
+    // Before: animated was set to true AFTER init, but startTimer() was only called
+    // inside init (where animated was still false). The loader never animated.
+    // Now: whenever animated is set to true, didSet triggers and starts the timer.
+    var animated: Bool = false {
+        didSet {
+            if animated {
+                startTimer()
+            }
+        }
+    }
 
     private(set) var progressSubject = CurrentValueSubject<Float, Never>(0.0)
 
@@ -17,6 +27,13 @@ class LoaderView: UIView {
         if animated {
             startTimer()
         }
+    }
+
+    // FIX: Invalidate the timer when the view is deallocated.
+    // Without this, the RunLoop keeps a reference to the timer, the timer keeps firing,
+    // and its closure tries to access a deallocated view -> crash or leak.
+    deinit {
+        timer?.invalidate()
     }
 
     required init?(coder: NSCoder) {
@@ -50,12 +67,16 @@ class LoaderView: UIView {
     }
 
     private func startTimer() {
-        timer = Timer.scheduledTimer(withTimeInterval: 0.04, repeats: true) { [unowned self] _ in
-            progressSubject.value += 0.1
-            if progressSubject.value > 1.0 {
-                progressSubject.value = 0.0
+        // FIX: [unowned self] -> [weak self]
+        // unowned crashes if self is deallocated while the timer is still on the RunLoop.
+        // weak safely becomes nil, and the guard exits early instead of crashing.
+        timer = Timer.scheduledTimer(withTimeInterval: 0.04, repeats: true) { [weak self] _ in
+            guard let self else { return }
+            self.progressSubject.value += 0.1
+            if self.progressSubject.value > 1.0 {
+                self.progressSubject.value = 0.0
             }
-            progressLayer.strokeEnd = CGFloat(progressSubject.value)
+            self.progressLayer.strokeEnd = CGFloat(self.progressSubject.value)
         }
     }
 }

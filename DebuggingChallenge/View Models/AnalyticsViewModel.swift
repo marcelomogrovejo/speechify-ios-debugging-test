@@ -12,6 +12,8 @@ class AnalyticsViewModel: ObservableObject {
         self.projectService = projectService
     }
 
+    // FIX: @MainActor ensures @Published properties update on the main thread (same as ProjectsViewModel).
+    @MainActor
     func loadAnalytics() {
         Task {
             isLoading = true
